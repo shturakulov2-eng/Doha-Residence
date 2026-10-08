@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#7d0e2d" />
+  <title>DOHA turar-joy majmuasi — 200 ta xonadon uchun CHEGIRMA</title>
+  <meta name="description" content="Samarqand shahri Sateppo massividan uy xarid qiling va sovg'asiga 1 ta xonadon va 2 ta KIA SONATA avtomobillaridan birini qo'lga kiriting!" />
+  <meta property="og:title" content="DOHA turar-joy majmuasi" />
+  <meta property="og:description" content="200 ta xonadon uchun CHEGIRMAga yoziling!" />
+  <meta property="og:image" content="/assets/logo.png" />
+  <link rel="icon" href="/assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <span class="glow glow--1"></span>
+    <span class="glow glow--2"></span>
+  </div>
+
+  <main class="screen">
+    <header class="header reveal" style="--d: 0ms">
+      <img class="logo" src="/assets/logo.png" alt="DOHA turar-joy majmuasi" width="1024" height="691" />
+    </header>
+
+    <section class="hero reveal" style="--d: 120ms">
+      <p class="hero__text">
+        <b>Samarqand</b> shahri <b>Sateppo</b> massividan uy xarid qiling va sovg'asiga
+        <span class="accent">1&nbsp;ta xonadon</span> va
+        <span class="accent">2&nbsp;ta KIA&nbsp;SONATA</span> avtomobillaridan birini qo'lga kiriting!
+      </p>
+    </section>
+
+    <section class="card reveal" style="--d: 240ms">
+      <div class="car car--left" aria-hidden="true">
+        <img src="/assets/kia-sonet.webp" alt="" width="480" height="285" />
+        <span class="car__flare car__flare--main"></span>
+        <span class="car__flare car__flare--side"></span>
+      </div>
+      <div class="car car--right" aria-hidden="true">
+        <img src="/assets/kia-sonet.webp" alt="" width="480" height="285" />
+        <span class="car__flare car__flare--main"></span>
+        <span class="car__flare car__flare--side"></span>
+      </div>
+      <div class="badge"><span class="badge__dot"></span>Cheklangan taklif</div>
+      <h1 class="card__title">
+        200 ta xonadon uchun berilgan <span class="accent">CHEGIRMA</span>ga yozilish uchun ismingiz va telefon raqamingizni yozib qoldiring!
+      </h1>
+
+      <form class="form" id="leadForm" novalidate>
+        <label class="field" id="nameField">
+          <span class="field__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2.2c-4.1 0-8 2-8 4.9V21h16v-1.9c0-2.9-3.9-4.9-8-4.9Z"/></svg>
+          </span>
+          <input type="text" name="name" id="name" placeholder="Ismingizni kiriting" autocomplete="given-name" maxlength="40" required />
+        </label>
+
+        <label class="field" id="phoneField">
+          <span class="field__prefix">+998</span>
+          <input type="tel" name="phone" id="phone" placeholder="99 999 99 99" inputmode="numeric" autocomplete="tel-national" required />
+        </label>
+
+        <button type="submit" class="btn" id="submitBtn">
+          <span class="btn__label">CHEGIRMAGA YOZILISH</span>
+          <span class="btn__spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <footer class="footer reveal" style="--d: 360ms">
+      <p class="footer__label">Murojaat uchun</p>
+      <div class="footer__phones">
+        <a class="phone" href="tel:+998874430008">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>
+          87 443 00 08
+        </a>
+        <a class="phone" href="tel:+998885420008">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></svg>
+          88 542 00 08
+        </a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

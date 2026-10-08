@@ -1,0 +1,8 @@
+{
+  "name": "doha-landing",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npx -y serve -l 5173 ."
+  }
+}

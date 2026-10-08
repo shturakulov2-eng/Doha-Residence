@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#7d0e2d" />
+  <meta name="robots" content="noindex" />
+  <title>Tabriklaymiz! — DOHA</title>
+  <link rel="icon" href="/assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <span class="glow glow--1"></span>
+    <span class="glow glow--2"></span>
+  </div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+  <main class="screen welcome">
+    <header class="header reveal" style="--d: 0ms">
+      <img class="logo logo--sm" src="/assets/logo.png" alt="DOHA turar-joy majmuasi" width="1024" height="691" />
+    </header>
+
+    <section class="welcome__body">
+      <div class="ticket reveal" style="--d: 80ms">
+        <p class="ticket__label">SIZNING RAQAMINGIZ</p>
+        <p class="ticket__number" id="leadNumber">41</p>
+      </div>
+
+      <h1 class="welcome__title reveal" style="--d: 200ms">
+        <span class="accent">TABRIKLAYMIZ</span> SIZ MAXSUS TAKLIFGA EGA BO'LDINGIZ!
+        TELEGRAM KANALIMIZGA OBUNA BO'LING!
+      </h1>
+    </section>
+
+    <footer class="welcome__footer reveal" style="--d: 300ms">
+      <div class="progress"><span class="progress__bar"></span></div>
+      <a class="btn btn--tg" id="tgLink" href="https://t.me/doha_residence">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.8 15.3 9.4 20c.6 0 .8-.2 1.1-.5l2.6-2.5 5.4 4c1 .5 1.7.3 2-.9l3.6-17c.4-1.5-.5-2.1-1.5-1.7L1.4 9.5c-1.4.6-1.4 1.4-.2 1.8l5.4 1.7L19 5.1c.6-.4 1.1-.2.7.2L9.8 15.3Z"/></svg>
+        <span class="btn__label">TELEGRAMGA O'TISH</span>
+      </a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var TELEGRAM_URL = "https://t.me/doha_residence";
+      var REDIRECT_MS = 2000;
+
+      var n = parseInt(new URLSearchParams(location.search).get("n"), 10);
+      if (!(n >= 41)) n = 41;
+
+      var el = document.getElementById("leadNumber");
+      var from = Math.max(1, n - 30);
+      var start = performance.now();
+      var duration = 700;
+      (function tick(now) {
+        var t = Math.min(1, (now - start) / duration);
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(from + (n - from) * eased);
+        if (t < 1) requestAnimationFrame(tick);
+      })(start);
+
+      setTimeout(function () { location.replace(TELEGRAM_URL); }, REDIRECT_MS);
+
+      var canvas = document.getElementById("confetti");
+      var ctx = canvas.getContext("2d");
+      var dpr = window.devicePixelRatio || 1;
+      var W, H;
+      function resize() {
+        W = canvas.width = innerWidth * dpr;
+        H = canvas.height = innerHeight * dpr;
+      }
+      resize();
+      addEventListener("resize", resize);
+
+      var colors = ["#ffcc99", "#ffffff", "#ffb877", "#ffe0bf", "#f5a3b5"];
+      var pieces = [];
+      for (var i = 0; i < 140; i++) {
+        pieces.push({
+          x: W / 2 + (Math.random() - 0.5) * W * 0.3,
+          y: H * 0.35,
+          vx: (Math.random() - 0.5) * 18 * dpr,
+          vy: (-Math.random() * 16 - 6) * dpr,
+          w: (6 + Math.random() * 6) * dpr,
+          h: (3 + Math.random() * 4) * dpr,
+          r: Math.random() * Math.PI,
+          vr: (Math.random() - 0.5) * 0.3,
+          c: colors[(Math.random() * colors.length) | 0]
+        });
+      }
+      (function draw() {
+        ctx.clearRect(0, 0, W, H);
+        var alive = false;
+        for (var i = 0; i < pieces.length; i++) {
+          var p = pieces[i];
+          p.vy += 0.45 * dpr;
+          p.vx *= 0.985;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.r += p.vr;
+          if (p.y < H + 20) alive = true;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.r);
+          ctx.fillStyle = p.c;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        }
+        if (alive) requestAnimationFrame(draw);
+      })();
+    })();
+  </script>
+</body>
+</html>
