@@ -4,19 +4,47 @@ const COUNTER_KEY = "doha:lead_counter";
 const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 
-async function nextNumber() {
-  if (!REDIS_URL || !REDIS_TOKEN) return null;
+const ABACUS_URL =
+  process.env.COUNTER_URL || "https://abacus.jasoncameron.dev/hit/doha-residence-uz/leads";
+
+async function fetchWithTimeout(url, options = {}, ms = 2500) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
   try {
-    const res = await fetch(`${REDIS_URL}/incr/${encodeURIComponent(COUNTER_KEY)}`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
-    });
-    if (!res.ok) return null;
-    const { result } = await res.json();
-    return START_NUMBER - 1 + Number(result);
-  } catch (e) {
-    return null;
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
   }
+}
+
+async function incrRedis() {
+  const res = await fetchWithTimeout(`${REDIS_URL}/incr/${encodeURIComponent(COUNTER_KEY)}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
+  });
+  if (!res.ok) throw new Error(`Redis ${res.status}`);
+  const { result } = await res.json();
+  return Number(result);
+}
+
+async function incrAbacus() {
+  const res = await fetchWithTimeout(ABACUS_URL);
+  if (!res.ok) throw new Error(`Abacus ${res.status}`);
+  const { value } = await res.json();
+  return Number(value);
+}
+
+async function nextNumber() {
+  const sources = REDIS_URL && REDIS_TOKEN ? [incrRedis, incrAbacus] : [incrAbacus];
+  for (const incr of sources) {
+    try {
+      const count = await incr();
+      if (count >= 1) return START_NUMBER - 1 + count;
+    } catch (e) {
+      console.error("Counter error:", e.message);
+    }
+  }
+  return null;
 }
 
 async function sendToCrm(lead) {

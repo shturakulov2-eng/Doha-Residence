@@ -1,6 +1,6 @@
 (function () {
   var START_NUMBER = 41;
-  var SUBMIT_TIMEOUT_MS = 1500;
+  var SUBMIT_TIMEOUT_MS = 3500;
   var LOCAL_KEY = "doha_lead_number";
 
   var form = document.getElementById("leadForm");
