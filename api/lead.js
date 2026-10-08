@@ -57,6 +57,32 @@ async function sendToCrm(lead) {
   console.log("New lead:", JSON.stringify(lead));
 }
 
+const SHEETS_URL = process.env.GOOGLE_SHEETS_URL;
+const SHEETS_SECRET = process.env.GOOGLE_SHEETS_SECRET || "";
+
+async function sendToSheets(lead) {
+  if (!SHEETS_URL) return;
+  const res = await fetchWithTimeout(
+    SHEETS_URL,
+    {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ ...lead, secret: SHEETS_SECRET }),
+      redirect: "follow",
+    },
+    9000
+  );
+  const text = await res.text();
+  if (!res.ok || text.includes('"ok":false')) {
+    throw new Error(`Sheets ${res.status}: ${text.slice(0, 200)}`);
+  }
+}
+
+let waitUntil = null;
+try {
+  ({ waitUntil } = require("@vercel/functions"));
+} catch (e) {}
+
 function readBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
   try {
@@ -92,11 +118,14 @@ module.exports = async function handler(req, res) {
     createdAt: new Date().toISOString(),
   };
 
-  try {
-    await sendToCrm(lead);
-  } catch (e) {
-    console.error("CRM error:", e);
-  }
+  const background = Promise.allSettled([sendToSheets(lead), sendToCrm(lead)]).then((results) => {
+    results.forEach((r) => {
+      if (r.status === "rejected") console.error("Lead delivery error:", r.reason);
+    });
+  });
+
+  if (waitUntil) waitUntil(background);
+  else await background;
 
   return res.status(200).json({ ok: true, number });
 };

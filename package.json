@@ -4,5 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "npx -y serve -l 5173 ."
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.9.11"
   }
 }
