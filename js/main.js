@@ -74,6 +74,15 @@
     nameInput.blur();
     phoneInput.blur();
 
+    var eventId = "lead-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+    try {
+      sessionStorage.setItem("doha_pending_lead", JSON.stringify({
+        id: eventId,
+        name: name.toLowerCase(),
+        phone: "998" + phone
+      }));
+    } catch (err) {}
+
     var done = false;
     function finish(serverNumber) {
       if (done) return;
@@ -90,6 +99,7 @@
       body: JSON.stringify({
         name: name,
         phone: "+998" + phone,
+        eventId: eventId,
         page: location.href,
         referrer: document.referrer || null
       }),

@@ -11,6 +11,41 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  (function () {
+    var lead = null;
+    try {
+      lead = JSON.parse(sessionStorage.getItem('doha_pending_lead'));
+      sessionStorage.removeItem('doha_pending_lead');
+    } catch (e) {}
+
+    if (lead && lead.phone) {
+      fbq('init', '1069706736040769', { ph: lead.phone, fn: lead.name, country: 'uz' });
+    } else {
+      fbq('init', '1069706736040769');
+    }
+    fbq('track', 'PageView');
+
+    // Lead faqat formadan kelganda yuboriladi, sahifani to'g'ridan-to'g'ri ochganda emas.
+    if (lead && lead.id) {
+      fbq('track', 'Lead', { content_name: 'Chegirma 200 xonadon' }, { eventID: lead.id });
+    }
+  })();
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1069706736040769&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
   <div class="bg" aria-hidden="true">
@@ -64,7 +99,27 @@
         if (t < 1) requestAnimationFrame(tick);
       })(start);
 
-      setTimeout(function () { location.replace(TELEGRAM_URL); }, REDIRECT_MS);
+      var MAX_WAIT_MS = 4000;
+      var timeUp = false;
+      var pixelReady = false;
+      var redirected = false;
+      function maybeRedirect(force) {
+        if (redirected || !(force || (timeUp && pixelReady))) return;
+        redirected = true;
+        location.replace(TELEGRAM_URL);
+      }
+      var pixelScript = document.querySelector('script[src*="fbevents.js"]');
+      if (window.fbq && window.fbq.callMethod) {
+        pixelReady = true;
+      } else if (pixelScript) {
+        var onPixel = function () { setTimeout(function () { pixelReady = true; maybeRedirect(); }, 300); };
+        pixelScript.addEventListener("load", onPixel);
+        pixelScript.addEventListener("error", function () { pixelReady = true; maybeRedirect(); });
+      } else {
+        pixelReady = true;
+      }
+      setTimeout(function () { timeUp = true; maybeRedirect(); }, REDIRECT_MS);
+      setTimeout(function () { maybeRedirect(true); }, MAX_WAIT_MS);
 
       var canvas = document.getElementById("confetti");
       var ctx = canvas.getContext("2d");

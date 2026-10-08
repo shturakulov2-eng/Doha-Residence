@@ -85,6 +85,7 @@ module.exports = async function handler(req, res) {
     name,
     phone,
     number,
+    eventId: body.eventId || null,
     page: body.page || null,
     referrer: body.referrer || null,
     userAgent: req.headers["user-agent"] || null,
