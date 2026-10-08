@@ -92,7 +92,42 @@ function readBody(req) {
   }
 }
 
+async function diagnose(req, res) {
+  const report = {
+    GOOGLE_SHEETS_URL: SHEETS_URL ? `set (${SHEETS_URL.slice(0, 40)}...${SHEETS_URL.slice(-6)})` : "MISSING",
+    GOOGLE_SHEETS_SECRET: SHEETS_SECRET ? `set (${SHEETS_SECRET.length} chars)` : "MISSING",
+    urlEndsWithExec: SHEETS_URL ? SHEETS_URL.trim().endsWith("/exec") : false,
+    urlHasSpaces: SHEETS_URL ? SHEETS_URL !== SHEETS_URL.trim() : false,
+    waitUntil: Boolean(waitUntil),
+  };
+
+  const key = String((req.query && req.query.diag) || "");
+  if (SHEETS_URL && SHEETS_SECRET && key === SHEETS_SECRET) {
+    try {
+      await sendToSheets({
+        name: "TEST (diagnostika)",
+        phone: "+998000000000",
+        number: 0,
+        eventId: "diagnostics",
+        page: "diagnostics",
+        createdAt: new Date().toISOString(),
+      });
+      report.sheetsTest = "OK - jadvalga TEST qatori yozildi";
+    } catch (e) {
+      report.sheetsTest = `FAILED: ${e.message}`;
+    }
+  } else {
+    report.sheetsTest = "skipped (?diag=<GOOGLE_SHEETS_SECRET> bilan oching)";
+  }
+
+  return res.status(200).json(report);
+}
+
 module.exports = async function handler(req, res) {
+  if (req.method === "GET" && req.query && "diag" in req.query) {
+    return diagnose(req, res);
+  }
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
